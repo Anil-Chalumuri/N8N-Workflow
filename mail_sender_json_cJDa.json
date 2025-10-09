@@ -1,0 +1,101 @@
+{
+  "name": "mail sender",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -528,
+        -112
+      ],
+      "id": "56575b66-2f9d-42f4-97e8-71cb8ce7d6b3",
+      "name": "When chat message received",
+      "webhookId": "c4347407-63ae-467e-92e6-7902c0c460cb"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "29351993-decd-4d7d-a751-2fedb89fe88d",
+              "name": "chatInput",
+              "value": "={{ $json.chatInput }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -320,
+        -112
+      ],
+      "id": "fd4e337e-9b52-4eb0-8cbd-f4e0d8bcf4f7",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "sendTo": "sudhanshu@euron.one;",
+        "subject": "hi",
+        "message": "={{ $json.chatInput }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -48,
+        -112
+      ],
+      "id": "2a0ea8e2-e06a-48af-9609-8e965dfe3acf",
+      "name": "Send a message",
+      "webhookId": "867d309b-4108-41a5-8502-d334382dc15a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "LAahY2RdEMfWjp55",
+          "name": "Gmail account 3"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "db675141-3087-4e60-a155-0872ead2a5bd",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5803b12455e37b4e61e6adfd91f47bf7633ccace7711bf26397316ff159df6b5"
+  },
+  "id": "9G8xD299jw0IGfGS",
+  "tags": []
+}
