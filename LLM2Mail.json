@@ -1,0 +1,179 @@
+{
+  "name": "LLM2Mail",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "9d4c8aa3-50d4-43f5-be47-4ec8110c061a",
+      "name": "When chat message received",
+      "webhookId": "3711590c-579f-47ba-972e-ef71568810e9"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "059e468e-10ca-4120-84a2-a7e4aa0537c5",
+              "name": "chatInput",
+              "value": "={{ $json.chatInput }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "47a7f4a7-ca9c-4e09-b354-3c79e4145151",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a helpful assistant, what ever question is asked you need to Wikipedia and summarize it with bullet points and give me the output which not more than 200 words"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        416,
+        0
+      ],
+      "id": "adf8710c-858f-4056-a277-07571c093f0b",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        288,
+        208
+      ],
+      "id": "903f05bd-747e-4fc1-9763-fbedc880d53a",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "zVG1wmHuROpMDJVm",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "anil.chalumuris@gmail.com",
+        "subject": "=N8N mails  for  {{ $('Edit Fields').item.json.chatInput }}",
+        "message": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        768,
+        0
+      ],
+      "id": "98881653-6742-43bf-bedb-bfe568644cb5",
+      "name": "Send a message",
+      "webhookId": "7398cf80-85b7-493d-9dde-708584154427",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "u5tftsA8xc8ZGIoy",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolWikipedia",
+      "typeVersion": 1,
+      "position": [
+        576,
+        208
+      ],
+      "id": "f4a8387c-99e5-4afc-a913-966300e99486",
+      "name": "Wikipedia"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wikipedia": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "251d0c51-f8fe-4569-869d-93fe6c668040",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "378c534abfc2e5cd5200324ec322cd8dd66a5a997b9cae15d10a841d3ce5a576"
+  },
+  "id": "s8YFBX3F5gjmd6qI",
+  "tags": []
+}

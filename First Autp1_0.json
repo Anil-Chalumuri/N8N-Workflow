@@ -1,0 +1,90 @@
+{
+  "name": "First Autp1/0",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -304,
+        48
+      ],
+      "id": "a28eb544-3600-4e14-88a5-5ad412df7018",
+      "name": "When chat message received",
+      "webhookId": "f598c20b-af91-4bf1-b402-499eae5d273e"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are AI Expert and you can answer on AI model and agents"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        -96,
+        64
+      ],
+      "id": "f8fe470c-b4c5-4d31-963c-a1b4f004bdde",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -128,
+        240
+      ],
+      "id": "85c2555c-b784-4146-8704-3314de6048ec",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "uZ1fkHUhSPXYX07R",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6818e9be-5ed9-46a1-811d-075fccaa78d3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "378c534abfc2e5cd5200324ec322cd8dd66a5a997b9cae15d10a841d3ce5a576"
+  },
+  "id": "KRYUgsDGhdreaGI9",
+  "tags": []
+}
