@@ -1,0 +1,389 @@
+{
+  "name": "20th_Dec_Subworkflows_Agent_Dhruv",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -608,
+        -240
+      ],
+      "id": "f4485b21-8696-4e81-9b70-b0d21b0eef2f",
+      "name": "Telegram Trigger",
+      "webhookId": "472bd361-f108-45e6-ade5-f44885bd636b",
+      "credentials": {
+        "telegramApi": {
+          "id": "W6XV6RQORTB3eBDg",
+          "name": "Agent Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "eac7d8fa-ef3d-4630-be8c-5d5bdb67cbef",
+                    "leftValue": "={{ $json.message.voice.file_id }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Audio"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "1ef1176d-cb17-4798-9d35-4a82e2ef5f9a",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "text"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -416,
+        -240
+      ],
+      "id": "500603de-ae0e-4a17-87db-fffe43c9abf8",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0e29533d-9944-48bd-938c-769b77ad25c5",
+              "name": "message.text",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            },
+            {
+              "id": "0f15ddbf-0bd6-4a30-85e5-02843417cd9a",
+              "name": "",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -144,
+        -176
+      ],
+      "id": "1884271a-bdd8-4505-99e3-a231626b30d4",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        64
+      ],
+      "id": "7b5aded3-ab36-4c8f-80d0-741b17079ea1",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "5NHf7ILbLoMVxKcb",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.voice.file_id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -256,
+        -368
+      ],
+      "id": "0114fc81-7edd-4263-a8c3-38038fdab6a0",
+      "name": "Get a file",
+      "webhookId": "88e5039b-bafe-463f-9075-1c728d26c3e9",
+      "credentials": {
+        "telegramApi": {
+          "id": "W6XV6RQORTB3eBDg",
+          "name": "Agent Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        -64,
+        -368
+      ],
+      "id": "1fd0c10a-948e-414f-89a0-ec11d6a167bd",
+      "name": "audio to text",
+      "credentials": {
+        "openAiApi": {
+          "id": "8IidOdkLmo0Xt32q",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        512,
+        -240
+      ],
+      "id": "8b72daa6-99bc-4d56-af0b-7656b2dc983e",
+      "name": "Send a text message",
+      "webhookId": "c4cc5fc0-376b-4dfb-bd16-c128787247e5",
+      "credentials": {
+        "telegramApi": {
+          "id": "W6XV6RQORTB3eBDg",
+          "name": "Agent Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger').item.json.message.chat.id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        176,
+        80
+      ],
+      "id": "ac73d635-3b7c-4aa7-99c2-827fc42517ec",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "description": "Use this search tool ONLY when information is not available in the input or requires external lookup.\n\nThis tool is meant for:\n- Finding relevant data, references, or examples related to automation, AI, SaaS, workflows, or tools\n- Fetching fresh or missing information that cannot be inferred logically\n\nDo NOT use this tool if the answer can be generated using reasoning alone.\n\nAlways return a short, structured result after searching.",
+        "workflowId": {
+          "__rl": true,
+          "value": "xz3AFt53UbEvPFQv",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/xz3AFt53UbEvPFQv",
+          "cachedResultName": "Sub_Search"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        80
+      ],
+      "id": "e0215498-8c56-4e53-9e62-54a7f0622d25",
+      "name": "Search Tool"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "options": {
+          "systemMessage": "=You are Agent Dhruv — a practical, decision-driven AI assistant designed to solve user requests efficiently using the minimum required tools.\n\nYour primary goal is to:\n• Understand the user’s intent clearly\n• Decide whether external tools are actually needed\n• Use ONLY the most relevant tool(s) when required\n• Produce clear, concise, and actionable outputs\n\n━━━━━━━━━━━━━━\nHOW TO THINK\n━━━━━━━━━━━━━━\n1. First, analyze the user message carefully.\n2. Ask yourself:\n   - Can I answer this using my internal knowledge?\n   - Does this require real-time, external, or factual data?\n3. Use tools ONLY if they add real value.\n4. Never use multiple tools for the same task unless absolutely necessary.\n5. Prefer short, structured answers over long explanations.\n\n━━━━━━━━━━━━━━\nTOOL USAGE RULES\n━━━━━━━━━━━━━━\n\n🔍 Search Tool (Generic / Sub Search Workflow)\nUse ONLY when:\n• The user asks for data, facts, trends, stats, comparisons, or research\n• Information is time-sensitive or unknown\n• The answer depends on external sources\n\nDo NOT use if:\n• The question is conceptual, strategic, or opinion-based\n\n📅 Calendar Tool\nUse ONLY when:\n• Scheduling, availability, reminders, or time-based actions are requested\n\n📧 Email Tool\nUse ONLY when:\n• The user explicitly asks to draft, send, reply, or summarize emails\n\n📝 Content / Post Tools\nUse ONLY when:\n• The user asks to create posts, messages, documents, or copy\n\n🧠 Memory\n• Store only long-term, reusable preferences or context\n• Do NOT store one-time queries or temporary data\n\n━━━━━━━━━━━━━━\nOUTPUT RULES\n━━━━━━━━━━━━━━\n• Always respond with a clear final answer\n• Use bullet points, short sections, or steps where helpful\n• Avoid unnecessary follow-up questions\n• If clarification is required, ask ONE precise question only\n\n━━━━━━━━━━━━━━\nDECISION PRIORITY\n━━━━━━━━━━━━━━\n1. Internal reasoning (no tools)\n2. One best tool\n3. Multiple tools (last resort)\n\n━━━━━━━━━━━━━━\nFAILSAFE BEHAVIOR\n━━━━━━━━━━━━━━\nIf a tool fails:\n• Try ONE alternative tool only if relevant\n• Otherwise, respond with the best possible answer using available information\n\n━━━━━━━━━━━━━━\nTONE & STYLE\n━━━━━━━━━━━━━━\n• Clear, practical, no fluff\n• Slightly consultative\n• Focus on outcomes, not theory\n\nYou are not here to show how many tools you can use.\nYou are here to deliver the best result with the least complexity."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        160,
+        -240
+      ],
+      "id": "27865043-4d1f-439f-87e4-739ceeee0317",
+      "name": "Agent Dhruv"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Get a file",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Agent Dhruv",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agent Dhruv",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a file": {
+      "main": [
+        [
+          {
+            "node": "audio to text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "audio to text": {
+      "main": [
+        [
+          {
+            "node": "Agent Dhruv",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Agent Dhruv",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agent Dhruv",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agent Dhruv": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "fea53643-126e-4f61-9122-08b8f6670539",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c3e645f5109637be2409447c66b5bc87c40395588b268359a2148764bbf4227e"
+  },
+  "id": "2cOg4zAC5T61pGJr",
+  "tags": []
+}

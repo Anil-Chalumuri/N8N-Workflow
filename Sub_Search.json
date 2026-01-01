@@ -1,0 +1,216 @@
+{
+  "name": "Sub_Search",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -416,
+        -208
+      ],
+      "id": "2e31e27f-951c-4be6-8277-e571a101c9fc",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolWikipedia",
+      "typeVersion": 1,
+      "position": [
+        -112,
+        64
+      ],
+      "id": "d8de8c4f-6585-4723-a57b-0866d71e9fd3",
+      "name": "Wikipedia"
+    },
+    {
+      "parameters": {
+        "resource": "all",
+        "limit": 20,
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.hackerNewsTool",
+      "typeVersion": 1,
+      "position": [
+        32,
+        64
+      ],
+      "id": "57f53e0f-2fef-4209-9fa1-0492cf12336a",
+      "name": "Get many items in Hacker News"
+    },
+    {
+      "parameters": {
+        "query": "={{ $json.query }}",
+        "options": {}
+      },
+      "type": "@tavily/n8n-nodes-tavily.tavilyTool",
+      "typeVersion": 1,
+      "position": [
+        352,
+        64
+      ],
+      "id": "dba558e2-51eb-4b67-b490-fb4d6941ca1d",
+      "name": "Search in Tavily",
+      "credentials": {
+        "tavilyApi": {
+          "id": "5GWaJhYsrLHYZkOF",
+          "name": "Tavily account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "messages": {
+          "message": [
+            {
+              "content": "={{ $json.query }}"
+            }
+          ]
+        },
+        "options": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.perplexityTool",
+      "typeVersion": 1,
+      "position": [
+        192,
+        64
+      ],
+      "id": "648f6872-41eb-48fc-8406-ebe856fd7727",
+      "name": "Perplexity",
+      "credentials": {
+        "perplexityApi": {
+          "id": "mACe6bHyuo7Z3exN",
+          "name": "Perplexity 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "=You are a focused Research Agent.\n\nYour goal:\n- Give clear, short, and well-defined answers\n- Use external tools ONLY if absolutely required\n- Prefer reasoning over searching\n\nTOOL USAGE RULES:\n1. Do NOT use any tool by default.\n2. Use ONLY ONE tool per query.\n3. Use a tool ONLY when:\n   - Information is missing, outdated, or needs verification.\n\nTool selection:\n- Use Perplexity → for web serearch &  deep analysis or complex research.\n- Use Tavily → if Perplexity fails or verify infromation for quick web lookup or fresh info.\n- Use Wikipedia → only for definitions or background.\n- Use Hacker News → only for tech/startup sentiment.\n\nIf reasoning alone is enough → DO NOT use any tool.\n\nOUTPUT RULES:\n- Keep answers short and structured.\n- Avoid long explanations.\n- No unnecessary details.\n- Focus on the final answer, not the process.\n\nDefault response format:\n- Summary (2–3 lines)\n- Key Points (bullets)\n\nYou are an efficiency-first research system, not a search engine."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        -208,
+        -208
+      ],
+      "id": "81e8515c-2587-4fd9-be22-995ce2357b41",
+      "name": "Search Agent"
+    },
+    {
+      "parameters": {
+        "model": "x-ai/grok-4.1-fast",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -288,
+        64
+      ],
+      "id": "25396189-7a11-4932-ab86-f4af15033fb0",
+      "name": "grok-4.1-fast",
+      "credentials": {
+        "openRouterApi": {
+          "id": "5NHf7ILbLoMVxKcb",
+          "name": "OpenRouter account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "query": "latest AI model releases 2025"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Search Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wikipedia": {
+      "ai_tool": [
+        [
+          {
+            "node": "Search Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many items in Hacker News": {
+      "ai_tool": [
+        [
+          {
+            "node": "Search Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search in Tavily": {
+      "ai_tool": [
+        [
+          {
+            "node": "Search Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Perplexity": {
+      "ai_tool": [
+        [
+          {
+            "node": "Search Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "grok-4.1-fast": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Search Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "0fcdb144-b210-4d17-8d2e-02a589a9bcf8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c3e645f5109637be2409447c66b5bc87c40395588b268359a2148764bbf4227e"
+  },
+  "id": "xz3AFt53UbEvPFQv",
+  "tags": []
+}
